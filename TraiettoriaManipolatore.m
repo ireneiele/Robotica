@@ -33,8 +33,6 @@ lmax = sum(a)+sum(d); % Per fare i plot utilizzo dei limiti direttamente su quel
 
 i = 1;
 
-f = figure(1);
-hold on
 % f.OuterPosition = [115,132,940,712]; % Posizione figura
 
 % tic-toc per definire tutti i possibili punti raggiungibili dal
@@ -47,10 +45,10 @@ hold on
 % sul manipolatore in maniera da osservare come questo può ruotare ed
 % evitare problemi con il collegamento dei motori sopratutto
 
-for q1 = linspace(0,2*pi , 15)
-for q2 = linspace(-pi/4,pi/4, 15)
-for q3 = linspace(0,2*pi, 15)
-for q4 = linspace(-pi/4, pi*4,15)
+for q1 = linspace(0,2*pi , 4)
+for q2 = linspace(-pi/4,pi/4, 4)
+for q3 = linspace(0,2*pi, 4)
+for q4 = linspace(-pi/4, pi*4,4)
     T01 = DH_computation(d1, a1, alpha1,q1) ;
     T12 = DH_computation(d2, a2, alpha2, q2);
     T23 = DH_computation(d3, a3, alpha3, q3);
@@ -75,7 +73,6 @@ end
 end
 end
 end
-toc
 
     % Posizioni raggiungili nello spazio dal manipolatore
 
@@ -84,18 +81,17 @@ toc
 %   bound = boundary(P(:,1),P(:,2), P(:,3),1);
 %   plot3(P(bound,1),P(bound,2),P(bound,3),'LineWidth',3)
     
-%     plot3([0 xy1(1)],[0 xy1(2)], [0 xy1(3)],'r','LineWidth',8,'HandleVisibility','off')
-%     hold on
-%     plot3([xy1(1) xy2(1)],[xy1(2) xy2(2)], [xy1(3) xy2(3)],'b','LineWidth',8,'HandleVisibility','off')
-%     plot3([xy2(1) xy3(1)],[xy2(2) xy3(2)], [xy2(3) xy3(3)],'g','LineWidth',8,'HandleVisibility','off')
-%     plot3([xy3(1) xy4(1)],[xy3(2) xy4(2)], [xy3(3) xy4(3)],'y','LineWidth',8,'HandleVisibility','off')
+    plot3([0 xy1(1)],[0 xy1(2)], [0 xy1(3)],'r','LineWidth',8,'HandleVisibility','off')
+    hold on
+    plot3([xy1(1) xy2(1)],[xy1(2) xy2(2)], [xy1(3) xy2(3)],'b','LineWidth',8,'HandleVisibility','off')
+    plot3([xy2(1) xy3(1)],[xy2(2) xy3(2)], [xy2(3) xy3(3)],'g','LineWidth',8,'HandleVisibility','off')
+    plot3([xy3(1) xy4(1)],[xy3(2) xy4(2)], [xy3(3) xy4(3)],'y','LineWidth',8,'HandleVisibility','off')
 
 
-%     plot3(0,0,0,'k.','MarkerSize',10)
-%     plot3(xy1(1),xy1(2),xy1(3),'r.','MarkerSize',10)
-%     plot3(xy2(1),xy2(2),xy2(3),'b.','MarkerSize',10)
-%     plot3(xy3(1),xy3(2),xy3(3),'g.','MarkerSize',10)
-%     plot3(xy4(1),xy4(2),xy4(3),'y.','MarkerSize',10)
+    plot3(0,0,0,'k.','MarkerSize',45)
+    plot3(xy1(1),xy1(2),xy1(3),'k.','MarkerSize',25)
+    plot3(xy2(1),xy2(2),xy2(3),'k.','MarkerSize',25)
+    plot3(xy3(1),xy3(2),xy3(3),'k.','MarkerSize',25)
     
     grid
     set(gca,'FontSize',18)
