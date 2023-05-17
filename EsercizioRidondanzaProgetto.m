@@ -27,11 +27,12 @@ d=[d1,d2,d3,d4];
 alpha=[alpha1, alpha2, alpha3, alpha4];
 lmax = sum(a)+sum(d); 
 
-%% Definizione configurazione iniziale in SG (e quindi viene applicata la cinematica diretta per individuare la posa iniziale del manipolatore)
-qd1_i=pi/4;
-qd2_i=pi/4;
-qd3_i=-pi/6;
-qd4_i=-pi/2;
+%% Definizione configurazione iniziale in SG
+% si applica la cinematica diretta per individuare la posa iniziale del manipolatore
+qd1_i=-pi/2;
+qd2_i=pi/6;
+qd3_i=0;
+qd4_i=pi/4;
 
 qd_i=[qd1_i, qd2_i, qd3_i, qd4_i];
 %devo fare due simulazioni in parallelo per questo uso qd e qd_man che le
@@ -49,9 +50,8 @@ T04_i = T01_i*T12_i*T23_i*T34_i;
 pA = DirectKinematics(T04_i);
 
 
-%% Definizione configurazione finale in SG (e quindi viene applicata la cinematica diretta per individuare la posa finale del manipolatore)
-% mi serve per prelevare un punto finale, ma alla fine della simulazione
-% non la raggiungo. QUESTA MI SERVE SOLO PER CALCOLARE LA POSIZIONE FINALE
+%% Definizione configurazione intermedia in SG 
+% si applica la cinematica diretta per individuare la posa iniziale del manipolatore
 qd1_f=-pi/4;
 qd2_f=0;
 qd3_f=pi/3;
@@ -67,7 +67,7 @@ T34_f = DH_computation(0, a(4), 0, qd4_f);
 
 T04_f = T01_f*T12_f*T23_f*T34_f;
 
-pB = DirectKinematics(T04_f); % IMP!!! è pC o pB, NON LO SO
+pB = DirectKinematics(T04_f); 
 
 % finita la simulazione NON arriverò a questa config, questa mi serve solo
 % per calcolare la posizione finale. arrivo alla pos finale in maniera
@@ -75,8 +75,8 @@ pB = DirectKinematics(T04_f); % IMP!!! è pC o pB, NON LO SO
 
 %% Vengono assegnati i valori iniziali delle variabili contenenti posizioni e velocità iniziali in SO
 % SO
-XYd(1,:)=pA;
-XYddot(1,:)=[0, 0, 0]; %vel iniziale 
+XYd(1,:)=pA; %posizione iniziale
+XYddot(1,:)=[0, 0, 0]; %velocità iniziale 
 %posizione organo terminale sia simulazione con il funzionale che senza
 %funzionale
 XYe_man(1,:)=pA;
@@ -96,10 +96,9 @@ t=[0:delta_t:tC];
 %pianifico il nuovo rif nello SO usando cartesian planner generanso pos e
 %vel desiderat nello SO che saranno uguali per entrambi
 %generiamo velocità e posizione desiderata
-pB
-pC=[1.97,1.45,-1.20]';
 ro=2;
-Cen=[0 0 0];
+Cen=[1 2 0];
+pC=2*Cen-pB;
 deg=pi/4;
 for i=2:length(t)
     [XYd(i,:), XYddot(i,:)] = CartesianPlanner_Progetto(pA,pB,pC,ro,deg,Cen,tA,tB,tC,t(i));
@@ -148,39 +147,41 @@ f2.Color = [1 1 1];
 
 for i = 1:10:length(t)
     
-    sgt = sgtitle('3 DoF Manipulator','Color','black');
+    sgt = sgtitle('4 DoF Manipulator','Color','black');
     sgt.FontSize = 20;
     sgt.FontWeight = 'bold';
     sgt.Interpreter = 'latex';
+%     QUESTO è COMMENTATO PERCHE NEL NOSTRO CODICE NON CI STA LA PARTE
+%     SWENZA FUNZIONALE, NON HO BEN CAPITO  COME SI FA
+
+%     subplot(2,2,1)
+%     plot([0],[0],'.k','MarkerSize',20)
+%     hold on
+%     plot([0 XY1(i,1)],[0 XY1(i,2)],'-r','Linewidth',4)
+%     plot([0],[0],'.k','MarkerSize',20)
+%     plot([XY1(i,1) XY2(i,1)],[XY1(i,2) XY2(i,2)],'-b','Linewidth',4)
+%     plot([XY1(i,1)],[XY1(i,2)],'.k','MarkerSize',20)
+%     plot([XY2(i,1) XYe(i,1)],[XY2(i,2) XYe(i,2)],'-g','Linewidth',4)
+%     plot([XY2(i,1)],[XY2(i,2)],'.k','MarkerSize',20)
+%     plot(XYd(1:i,1),XYd(1:i,2),'--r','LineWidth',3)
+%     plot(XYe(1:i,1),XYe(1:i,2),'-b','LineWidth',1.5)
+%     plot(p_f(1),p_f(2),'k*','MarkerSize',20)
+%     text(p_f(1)+0.05,p_f(2),'$p_f$','Interpreter','latex','FontSize',16)
+%     plot(p_i(1),p_i(2),'k*','MarkerSize',20)
+%     text(p_i(1)+0.05,p_i(2),'$p_i$','Interpreter','latex','FontSize',16)
+%     
+%     xlim([-lmax lmax])
+%     ylim([-lmax lmax])
+%     
+%     xlabel('x [m]','Interpreter','latex')
+%     ylabel('y [m]','Interpreter','latex')
+%     
+%     set(gca,'FontSize',16)
+%     hold off
+%     grid on
+%     title("SENZA FUNZIONALE",'Interpreter','latex')
     
-    subplot(221)
-    plot([0],[0],'.k','MarkerSize',20)
-    hold on
-    plot([0 XY1(i,1)],[0 XY1(i,2)],'-r','Linewidth',4)
-    plot([0],[0],'.k','MarkerSize',20)
-    plot([XY1(i,1) XY2(i,1)],[XY1(i,2) XY2(i,2)],'-b','Linewidth',4)
-    plot([XY1(i,1)],[XY1(i,2)],'.k','MarkerSize',20)
-    plot([XY2(i,1) XYe(i,1)],[XY2(i,2) XYe(i,2)],'-g','Linewidth',4)
-    plot([XY2(i,1)],[XY2(i,2)],'.k','MarkerSize',20)
-    plot(XYd(1:i,1),XYd(1:i,2),'--r','LineWidth',3)
-    plot(XYe(1:i,1),XYe(1:i,2),'-b','LineWidth',1.5)
-    plot(p_f(1),p_f(2),'k*','MarkerSize',20)
-    text(p_f(1)+0.05,p_f(2),'$p_f$','Interpreter','latex','FontSize',16)
-    plot(p_i(1),p_i(2),'k*','MarkerSize',20)
-    text(p_i(1)+0.05,p_i(2),'$p_i$','Interpreter','latex','FontSize',16)
-    
-    xlim([-lmax lmax])
-    ylim([-lmax lmax])
-    
-    xlabel('x [m]','Interpreter','latex')
-    ylabel('y [m]','Interpreter','latex')
-    
-    set(gca,'FontSize',16)
-    hold off
-    grid on
-    title("SENZA FUNZIONALE",'Interpreter','latex')
-    
-    subplot(222)
+    subplot(2,2,2)
     plot([0],[0],'.k','MarkerSize',20)
     hold on
     plot([0 XY1_man(i,1)],[0 XY1_man(i,2)],'-r','Linewidth',4)
@@ -191,10 +192,12 @@ for i = 1:10:length(t)
     plot([XY2_man(i,1)],[XY2_man(i,2)],'.k','MarkerSize',20)
     plot(XYd(1:i,1),XYd(1:i,2),'--r','LineWidth',3)
     plot(XYe_man(1:i,1),XYe_man(1:i,2),'-b','LineWidth',1.5)
-    plot(p_f(1),p_f(2),'k*','MarkerSize',20)
-    text(p_f(1)+0.05,p_f(2),'$p_f$','Interpreter','latex','FontSize',16)
-    plot(p_i(1),p_i(2),'k*','MarkerSize',20)
-    text(p_i(1)+0.05,p_i(2),'$p_i$','Interpreter','latex','FontSize',16)
+    plot(pC(1),pC(2),'k*','MarkerSize',20)
+    text(pC(1)+0.05,pC(2),'$pC$','Interpreter','latex','FontSize',16)
+    plot(pB(1),pB(2),'k*','MarkerSize',20)
+    text(pB(1)+0.05,pB(2),'$pB$','Interpreter','latex','FontSize',16)
+    plot(pA(1),pA(2),'k*','MarkerSize',20)
+    text(pA(1)+0.05,pA(2),'$pA$','Interpreter','latex','FontSize',16)
     
     xlim([-lmax lmax])
     ylim([-lmax lmax])
